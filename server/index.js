@@ -32,11 +32,11 @@ app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
 app.use("/assets", express.static(path.join(__dirname, "public/assets")));
-// app.use(express.static(path.join(__dirname, 'client')));
+app.use(express.static(path.join(__dirname, 'client')));
 
-// app.use('',(req,res)=>{
-//   res.sendFile(path.join(__dirname, "client/index.html"));
-// })
+app.use('',(req,res)=>{
+  res.sendFile(path.join(__dirname, "client/index.html"));
+})
 
 
 //  FILE STORAGE
@@ -73,13 +73,13 @@ app.use('/user',userRoutes)
 app.use('/posts',postRoutes)
 
 
-// app.get('*', function(req, res) {
-//   res.sendFile(path.join(__dirname, 'client/index.html'), function(err) {
-//     if (err) {
-//       res.status(500).send(err)
-//     }
-//   })
-// })
+app.get('*', function(req, res) {
+  res.sendFile(path.join(__dirname, 'client/index.html'), function(err) {
+    if (err) {
+      res.status(500).send(err)
+    }
+  })
+})
 // MONGOOSE SETUP
 
 const Port = process.env.PORT || 5000;
