@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "node_modules/.bin/netlify-lambda build",
-    "start": "node_modules/.bin/netlify-lambda serve"
+    "build": "netlify-lambda build",
+    "start": "netlify-lambda serve"
   },
   "keywords": [],
   "author": "",
