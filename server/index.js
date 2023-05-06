@@ -17,13 +17,14 @@ import { verifyToken } from "./middleware/auth.js";
 import User from "./models/User.js";
 import Post from "./models/Post.js";
 import { users } from "./data/index.js";
+import ServerlessHttp from "serverless-http";
 // CONFIGURATION
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 dotenv.config();
 const app = express();
-
+const router = app.router()
 app.use(express.json());
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
@@ -34,11 +35,21 @@ app.use(cors());
 app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 app.use(express.static(path.join(__dirname, 'client')));
 
-app.use('',(req,res)=>{
-  res.sendFile(path.join(__dirname, "client/index.html"));
-})
+// app.use('',(req,res)=>{
+//   res.sendFile(path.join(__dirname, "client/index.html"));
+// })
 
+// MONGOOSE SETUP
 
+const Port = process.env.PORT || 5000;
+mongoose.connect(process.env.MONGO_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).then(()=>{
+    // app.listen(Port,()=>console.log(`Server is running at port :${Port}`))
+    // User.insertMany(users)
+    app.use('/.netlify/functions/api',router)
+}).catch((err)=>console.log(err))
 //  FILE STORAGE
 
 const storage = multer.diskStorage({
@@ -80,15 +91,6 @@ app.get('*', function(req, res) {
     }
   })
 })
-// MONGOOSE SETUP
 
-const Port = process.env.PORT || 5000;
-mongoose.connect(process.env.MONGO_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(()=>{
-    // app.listen(Port,()=>console.log(`Server is running at port :${Port}`))
-    // User.insertMany(users)
-}).catch((err)=>console.log(err))
 
-module.exports = app
+module.exports.handler = ServerlessHttp(app)
